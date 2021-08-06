@@ -2,12 +2,14 @@
   "name": "unpack-jsmap",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "types": "lib/esm/index.d.ts",
   "scripts": {
     "test": "tape -r ts-node/register tests/**/*.test.ts",
     "coverage": "nyc npm run test",
-    "build": "tsc"
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "Vasilii Ermilov",
