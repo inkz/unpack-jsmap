@@ -15,8 +15,9 @@ async function request (url: URL, format: ResponseFormat): Promise<any> {
   return await res.text()
 }
 
-export async function fetchMap (sourceMapUrl: URL): Promise<any> {
-  const map: any = await request(sourceMapUrl, 'json')
+export async function fetchMap (sourceMapUrl: URL | string): Promise<any> {
+  const sourceMapUrlObj = typeof sourceMapUrl === 'string' ? new URL(sourceMapUrl) : sourceMapUrl
+  const map: any = await request(sourceMapUrlObj, 'json')
   const result: any = {}
   for (let i = 0; i < map.sources.length; i++) {
     const content = map.sourcesContent && map.sourcesContent[i]
@@ -43,15 +44,16 @@ function getSourceMapUrl (scriptUrl: URL, scriptContent: string): URL {
   }
 }
 
-export async function unpack (scriptUrl: URL, settings?: UnpackSettings) : Promise<any> {
+export async function unpack (scriptUrl: URL | string, settings?: UnpackSettings) : Promise<any> {
   if (!scriptUrl) {
     throw new Error('script url is missing')
   }
+  const scriptUrlObj = typeof scriptUrl === 'string' ? new URL(scriptUrl) : scriptUrl
   settings = settings || {}
   let { scriptContent, forceFetch } = settings
 
   if (!scriptContent) {
-    scriptContent = await request(scriptUrl, 'text')
+    scriptContent = await request(scriptUrlObj, 'text')
   }
 
   if (!scriptContent) {
@@ -59,11 +61,11 @@ export async function unpack (scriptUrl: URL, settings?: UnpackSettings) : Promi
   }
 
   try {
-    const sourceMapUrl = getSourceMapUrl(scriptUrl, scriptContent)
+    const sourceMapUrl = getSourceMapUrl(scriptUrlObj, scriptContent)
     return await fetchMap(sourceMapUrl)
   } catch (err) {
     if (forceFetch) {
-      return await fetchMap(new URL(scriptUrl.origin + scriptUrl.pathname + '.map'))
+      return await fetchMap(new URL(scriptUrlObj.origin + scriptUrlObj.pathname + '.map'))
     } else {
       throw err
     }

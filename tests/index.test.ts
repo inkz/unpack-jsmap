@@ -18,6 +18,22 @@ test('fetchMap: schould fetch .js.map from provided URL', async (t) => {
   t.end()
 })
 
+test('fetchMap: schould fetch .js.map from provided URL as string', async (t) => {
+  const jsMapUrlString = 'https://www.example.com/example.js.map'
+  const jsMapUrl = new URL(jsMapUrlString)
+  const jsMapContent = {
+    sources: ['../test-module'],
+    sourcesContent: ['console.log(123)']
+  }
+  nock(jsMapUrl.origin).get(jsMapUrl.pathname).reply(200, jsMapContent)
+
+  const map = await fetchMap(jsMapUrlString)
+  t.deepEqual(map, {
+    '../test-module': 'console.log(123)'
+  })
+  t.end()
+})
+
 test('fetchMap: schould throw error if .js.map does not have correct structure', async (t) => {
   const jsMapUrl = new URL('https://www.example.com/example.js.map')
   const jsMapContent = {
@@ -61,6 +77,26 @@ test('unpack: schould fetch .js.map from provided script URL', async (t) => {
   })
 
   const map = await unpack(jsUrl)
+  t.deepEqual(map, {
+    '../test-module': 'console.log(123)'
+  })
+  t.end()
+})
+
+test('unpack: schould fetch .js.map from provided script URL as string', async (t) => {
+  const jsUrlString = 'https://www.example.com/example.js'
+  const jsUrl = new URL(jsUrlString)
+  const script = `
+    console.log(123);
+    //# sourceMappingURL=example.js.map
+  `
+  nock(jsUrl.origin).get(jsUrl.pathname).reply(200, script)
+  nock(jsUrl.origin).get('/example.js.map').reply(200, {
+    sources: ['../test-module'],
+    sourcesContent: ['console.log(123)']
+  })
+
+  const map = await unpack(jsUrlString)
   t.deepEqual(map, {
     '../test-module': 'console.log(123)'
   })
