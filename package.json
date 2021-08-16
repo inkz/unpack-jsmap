@@ -1,7 +1,7 @@
 {
   "name": "unpack-jsmap",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.2",
+  "description": "Library for recovering files from Webpack sourcemaps (`.js.map`).",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
@@ -13,7 +13,8 @@
   "author": "Vasilii Ermilov",
   "license": "ISC",
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "README.md"
   ],
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
