@@ -1,6 +1,6 @@
 {
   "name": "unpack-jsmap",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Library for recovering files from Webpack sourcemaps (`.js.map`).",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
